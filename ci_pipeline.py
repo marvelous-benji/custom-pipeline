@@ -17,7 +17,7 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
 
 def check_payload(data,headers):
-	key = os.getenv('ACCOUNT-KEYS')
+	key = os.getenv('ACCOUNT_KEYS')
 	dk = hmac.new(key=key.encode(), msg=data, digestmod=hashlib.sha256)
 	kk = hmac.new(key=key.encode(), msg=data, digestmod=hashlib.sha1)
 	result = 'sha256=' + dk.hexdigest()
@@ -27,8 +27,8 @@ def check_payload(data,headers):
 
 def git_action():
 
-	repo = git.Repo(os.getenv('LOCAL-REPO'))
-	remote_url = os.getenv('GITHUB-REPO')
+	repo = git.Repo(os.getenv('LOCAL_REPO'))
+	remote_url = os.getenv('GITHUB_REPO')
 	repo = repo.remotes.origin
 	if repo.active_branch.name != 'master':
 		repo.git.checkout('master')
