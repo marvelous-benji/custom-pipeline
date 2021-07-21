@@ -21,9 +21,6 @@ def check_payload(data,headers):
 	dk = hmac.new(key=key.encode(), msg=data, digestmod=hashlib.sha256)
 	kk = hmac.new(key=key.encode(), msg=data, digestmod=hashlib.sha1)
 	result = 'sha256=' + dk.hexdigest()
-	print(kk.hexdigest())
-	print(result,headers)
-	#fres = 'sha256='+result
 	return hmac.compare_digest(result,headers)
 
 
@@ -33,7 +30,9 @@ def git_action():
 	repo = git.Repo(os.getenv('LOCAL-REPO'))
 	remote_url = os.getenv('GITHUB-REPO')
 	repo = repo.remotes.origin
-	repo.pull()
+	if repo.active_branch.name != 'master':
+		repo.git.checkout('master')
+	repo.pull('master')
 	return 'success'
 
 
@@ -41,7 +40,7 @@ def git_action():
 
 
 
-@app.route('/clone_repo', methods=['POST'])
+@app.route('/pull_repo', methods=['POST'])
 def receive_event():
 	try:
 		data = request.data
