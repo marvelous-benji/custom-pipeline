@@ -6,18 +6,20 @@ import os
 
 from flask import Flask, request, jsonify
 
+with open('config.json','r') as configs:
+	config = json.load(configs)
 
 
 app = Flask(__name__)
 
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['SECRET_KEY'] = config['SECRET_KEY']
 
 
 
 
 
 def check_payload(data,headers):
-	key = os.getenv('ACCOUNT_KEYS')
+	key = config['ACCOUNT_KEYS']
 	dk = hmac.new(key=key.encode(), msg=data, digestmod=hashlib.sha256)
 	kk = hmac.new(key=key.encode(), msg=data, digestmod=hashlib.sha1)
 	result = 'sha256=' + dk.hexdigest()
@@ -27,8 +29,8 @@ def check_payload(data,headers):
 
 def git_action():
 
-	repo = git.Repo(os.getenv('LOCAL_REPO'))
-	remote_url = os.getenv('GITHUB_REPO')
+	repo = git.Repo(config['LOCAL_REPO'])
+	remote_url = config['GITHUB_REPO']
 	repo = repo.remotes.origin
 	if repo.active_branch.name != 'master':
 		repo.git.checkout('master')
